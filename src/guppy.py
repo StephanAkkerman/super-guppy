@@ -1,4 +1,6 @@
 import pandas_ta as ta
+import pandas as pd
+import numpy as np
 
 
 def guppy(df):
@@ -6,6 +8,14 @@ def guppy(df):
     Uses a dataframe of at least 70 rows and a columned name 'close' as input
     Returns trend prediction based on Super Guppy
     """
+
+    if type(df) != pd.DataFrame:
+        if type(df) == list:
+            df = pd.DataFrame(df, columns=["close"])
+        elif type(df) == np.ndarray:
+            df = pd.DataFrame(data=df, columns=["close"])
+        else:
+            print(f"Your input type is not supported: {type(df)}")
 
     # Keep only the close prices
     df = df[["close"]]

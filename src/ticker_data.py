@@ -2,6 +2,7 @@
 # https://www.linkedin.com/pulse/download-historical-data-all-cryptocoins-ccxt-gursel-karacor/
 
 from datetime import datetime, timedelta
+from tracemalloc import start
 
 from sklearn.manifold import trustworthiness
 
@@ -139,6 +140,7 @@ def crypto(exchange, symbol, timeframe, since=None, limit=70):
     # Returned DataFrame should consists of columns: index starting from 0, date as datetime, open, high, low, close, volume in numbers
     return df
 
+
 def stocks(symbol, timeframe, since=None, limit=70):
     """
     Pandas DataFrame of stock data of specified interval and dates.
@@ -152,26 +154,32 @@ def stocks(symbol, timeframe, since=None, limit=70):
     
     Valid timeframes are: 1m,2m,5m,15m,30m,60m,90m,1h,1d,5d,1wk,1mo,3mo
     """
-    
+
     # Need at least 70 rows to use Guppy
     # Calculate start_date using timeframe and current date
     today = datetime.today()
-    print(today)
-    
-    if timeframe[-1] == "m":
-        start_date = today - timedelta(minutes=int(timeframe[:-1])*limit)
-    elif timeframe == "1h":
-        # Every day misses data from 20:00 to 04:00, so 8 hours
-        start_date = today - timedelta(hours=limit)
-        days_diff = (today - start_date).days
-        start_date = start_date - timedelta(hours=days_diff*24)        
-        print(days_diff)
+
+    if timeframe == "1h" or "60m":
+        # Compensate for when there are no trading hours
+        start_date = today - timedelta(hours=limit + ((limit / 24) * 11))
+    if timeframe == "90m":
+        start_date = today - timedelta(days=9)
+    elif timeframe[-1] == "m":
+        start_date = today - timedelta(minutes=int(timeframe[:-1]) * limit)
+    # Compensate for weekends
     elif timeframe[-1] == "d":
-        start_date = today - timedelta(days=int(timeframe[:-1])*limit)
-            
+        start_date = today - timedelta(days=int(timeframe[:-1]) * limit * 1.5)
+
     df = yf.download(symbol, interval=timeframe, start=start_date, prepost=True)
-    
-    df = df.rename(columns={"Open": "open", "High": "high", "Low": "low", "Close": "close", "Adj Close": "adj close", "Volume": "volume"})
-    
-    print(df)
-    print(len(df))
+    df = df.rename(
+        columns={
+            "Open": "open",
+            "High": "high",
+            "Low": "low",
+            "Close": "close",
+            "Adj Close": "adj close",
+            "Volume": "volume",
+        }
+    )
+
+    return df
