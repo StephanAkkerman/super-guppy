@@ -2,9 +2,6 @@
 # https://www.linkedin.com/pulse/download-historical-data-all-cryptocoins-ccxt-gursel-karacor/
 
 from datetime import datetime, timedelta
-from tracemalloc import start
-
-from sklearn.manifold import trustworthiness
 
 import ccxt
 import yfinance as yf
