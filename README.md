@@ -8,7 +8,7 @@ This is a simple script Python for calculating the Super Guppy technical indicat
 
 ## Setup
 You only need one thing for using this function, that is a pandas dataframe consisting of 70 rows filled with close data of your favorite stock / cryptocurrency.
-The function will output a certainty about the current trend, if this is not what you are looking for, you can easily change the function to still calculate the super guppy but return something else.
+It will return the DataFrame filled with the EMAs + Guppy signal, where 1 = Buy, 0 = Hold, -1 = Sell. You can find this information in the "guppy" column of the returned DataFrame. This can be used for making strategies using the super guppy indicator. You can also use the EMAs values and colFinal columns to make your own strategy based on the values in those columns.
 
 ## Dependencies
 The required packages to run this code can be found in the `requirements.txt` file. To run this file, execute the following code block:
